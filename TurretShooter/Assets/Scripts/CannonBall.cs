@@ -9,11 +9,11 @@ public class CannonBall : MonoBehaviour
     [SerializeField] private float explosionForce = 12.0f;
     [SerializeField] private float explosionRadius = 9.0f;
     [SerializeField] private float explosionUpwardsModifier = 1.0f;
-    [SerializeField] private Animator animator;
+    [SerializeField] protected Animator animator;
 
-    private Rigidbody ballRigidbody;
+    protected Rigidbody ballRigidbody;
 
-    public void Setup(Vector3 fireForce)
+    public virtual void Setup(Vector3 fireForce)
     {
         ballRigidbody.AddForce(fireForce, ForceMode.Impulse);
         ballRigidbody.angularVelocity = new Vector3(
@@ -26,7 +26,7 @@ public class CannonBall : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void OnCollisionEnter(Collision collision)
+    protected virtual void OnCollisionEnter(Collision collision)
     {
         transform.rotation =
             Quaternion.FromToRotation(transform.up, collision.GetContact(0).normal)
