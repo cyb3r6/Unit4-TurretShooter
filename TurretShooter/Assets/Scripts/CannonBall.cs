@@ -6,6 +6,9 @@ public class CannonBall : MonoBehaviour
 {
     private static readonly int Exploded = Animator.StringToHash("Exploded");
 
+    [SerializeField] private float explosionForce = 12.0f;
+    [SerializeField] private float explosionRadius = 9.0f;
+    [SerializeField] private float explosionUpwardsModifier = 1.0f;
     [SerializeField] private Animator animator;
 
     private Rigidbody ballRigidbody;
@@ -34,6 +37,24 @@ public class CannonBall : MonoBehaviour
         ballRigidbody.isKinematic = true;
 
         animator.SetTrigger(Exploded);
+
+        Vector3 explosionPos = transform.position;
+        Collider[] colliders = Physics.OverlapSphere(explosionPos, explosionRadius, LayerMask.GetMask("Targets"));
+
+        foreach (Collider hit in colliders)
+        {
+            Rigidbody collidedRigidbody = hit.GetComponent<Rigidbody>();
+
+            if (collidedRigidbody != null)
+            {
+                collidedRigidbody.AddExplosionForce(
+                    explosionForce,
+                    explosionPos,
+                    explosionRadius,
+                    explosionUpwardsModifier,
+                    ForceMode.Impulse);
+            }
+        }
     }
 
     private void OnTriggerEnter(Collider other)
