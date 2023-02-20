@@ -68,6 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95973a6f4b04509449771e838d86edd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 3057176301240881670}
 --- !u!54 &1479362546976883821
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -95,6 +96,7 @@ GameObject:
   - component: {fileID: 6887013786065476407}
   - component: {fileID: 3052809683039842962}
   - component: {fileID: 3968424878133016464}
+  - component: {fileID: 5754354341154786724}
   m_Layer: 0
   m_Name: CannonBallMesh
   m_TagString: Untagged
@@ -168,6 +170,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!135 &5754354341154786724
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7303946394940784818}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.12
+  m_Center: {x: 0, y: -0.01977898, z: 0}
 --- !u!1001 &8062441722935998653
 PrefabInstance:
   m_ObjectHideFlags: 0
