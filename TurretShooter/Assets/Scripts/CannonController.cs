@@ -28,6 +28,11 @@ public class CannonController : MonoBehaviour
     [SerializeField]
     private Transform firePointTransform;
 
+    [Header("Target settings")]
+    public Material highlightMaterial;
+    private Material defaultMaterial;
+    private Transform hitTargetTransform;
+
     void Start()
     {
         
@@ -62,5 +67,40 @@ public class CannonController : MonoBehaviour
                 Instantiate(projectilePrefab, firePointTransform.position, Quaternion.identity);
         instantiatedBall.Setup(firePointTransform.forward * projectileFireForce);
 
+    }
+
+    /// <summary>
+    /// Challenge 1
+    /// </summary>
+    private void CannonRaycast()
+    {
+        if (hitTargetTransform != null)
+        {
+            // change to default material
+            var hitTargetRenderer = hitTargetTransform.GetComponent<Renderer>();
+            hitTargetRenderer.material = defaultMaterial;
+            hitTargetTransform = null;
+        }
+
+        Ray ray = new Ray(firePointTransform.position, firePointTransform.forward);
+        int layerMask = LayerMask.GetMask("Targets");
+        RaycastHit[] raycastHits = new RaycastHit[5];
+
+        int hits = Physics.RaycastNonAlloc(ray, raycastHits, 1000, layerMask);
+
+        var target = raycastHits[0].transform;
+
+        if (target)
+        {
+            var targetRenderer = target.GetComponent<Renderer>();
+            defaultMaterial = targetRenderer.material;
+
+            if (targetRenderer != null)
+            {
+                targetRenderer.material = highlightMaterial;
+            }
+
+            hitTargetTransform = target;
+        }
     }
 }

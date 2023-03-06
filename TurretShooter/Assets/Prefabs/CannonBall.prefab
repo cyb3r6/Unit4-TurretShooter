@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3057176301240881670}
   - component: {fileID: 3058751762636399729}
   - component: {fileID: 1479362546976883821}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CannonBall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 3052809683039842962}
   - component: {fileID: 3968424878133016464}
   - component: {fileID: 5754354341154786724}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CannonBallMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -190,13 +190,37 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 533576379358369824}
     m_Modifications:
+    - target: {fileID: 100000, guid: 2e7e92bc7175b744ea40878dedfa79e4, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: 2e7e92bc7175b744ea40878dedfa79e4, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: 2e7e92bc7175b744ea40878dedfa79e4, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 100006, guid: 2e7e92bc7175b744ea40878dedfa79e4, type: 3}
       propertyPath: m_Name
       value: ImpactExplosion
       objectReference: {fileID: 0}
     - target: {fileID: 100006, guid: 2e7e92bc7175b744ea40878dedfa79e4, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 100006, guid: 2e7e92bc7175b744ea40878dedfa79e4, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100008, guid: 2e7e92bc7175b744ea40878dedfa79e4, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 100010, guid: 2e7e92bc7175b744ea40878dedfa79e4, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 400006, guid: 2e7e92bc7175b744ea40878dedfa79e4, type: 3}
       propertyPath: m_RootOrder
@@ -309,9 +333,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: WFX_Fire Natural (Black Smoke)
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: a817de05addd7b64faa73b34c74013ce, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: a817de05addd7b64faa73b34c74013ce, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 100002, guid: a817de05addd7b64faa73b34c74013ce, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: a817de05addd7b64faa73b34c74013ce, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: a817de05addd7b64faa73b34c74013ce, type: 3}
       propertyPath: m_RootOrder
