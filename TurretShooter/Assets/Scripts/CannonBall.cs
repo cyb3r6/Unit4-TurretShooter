@@ -11,19 +11,25 @@ public class CannonBall : MonoBehaviour
     [SerializeField] private float explosionUpwardsModifier = 1.0f;
     [SerializeField] protected Animator animator;
 
-    protected Rigidbody ballRigidbody;
+    public virtual CannonBallType BallType => CannonBallType.Normal;
 
-    public virtual void Setup(Vector3 fireForce)
+    protected Rigidbody ballRigidbody;
+    protected CannonBallsPool pool;
+
+    public virtual void Setup(Vector3 fireForce, CannonBallsPool objectPool)
     {
+        ballRigidbody.angularVelocity = Vector3.zero;
+        ballRigidbody.velocity = Vector3.zero;
+        ballRigidbody.isKinematic = false;
+        pool = objectPool;
+
         ballRigidbody.AddForce(fireForce, ForceMode.Impulse);
-        ballRigidbody.angularVelocity = new Vector3(
-            Random.Range(-10, 10),
-            Random.Range(-10, 10),
-            Random.Range(-10, 10));
+        ballRigidbody.angularVelocity = new Vector3(Random.Range(-10, 10), Random.Range(-10, 10), Random.Range(-10, 10));
     }
+
     public void OnFinishedExplosionAnimation()
     {
-        Destroy(gameObject);
+        pool.ReleaseCannonBall(this, BallType);
     }
 
     protected virtual void OnCollisionEnter(Collision collision)
@@ -59,7 +65,7 @@ public class CannonBall : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Destroy(gameObject);
+        pool.ReleaseCannonBall(this, BallType);
     }
 
     private void Awake()

@@ -4,20 +4,23 @@ using UnityEngine;
 
 public class SplitCannonBall : CannonBall
 {
-    private static readonly int SpecialAvailableHash =
-        Animator.StringToHash("SpecialAvailable");
-    private static readonly int SpecialUsedHash =
-        Animator.StringToHash("SpecialUsed");
+    private static readonly int SpecialAvailableHash = Animator.StringToHash("SpecialAvailable");
+    private static readonly int SpecialUsedHash = Animator.StringToHash("SpecialUsed");
 
     public float splitTime = 0.7f;
     public float splitAngle = 20.0f;
-    public CannonBall splitCannonBallPrefab;
 
-    public override void Setup(Vector3 fireForce)
+    public override CannonBallType BallType => CannonBallType.Split;
+
+    private float remainingSplitTime;
+
+    public override void Setup(Vector3 fireForce, CannonBallsPool objectPool)
     {
-        base.Setup(fireForce);
+        base.Setup(fireForce, objectPool);
 
         animator.SetTrigger(SpecialAvailableHash);
+        remainingSplitTime = splitTime;
+        enabled = true;
     }
 
     protected override void OnCollisionEnter(Collision collision)
@@ -34,15 +37,15 @@ public class SplitCannonBall : CannonBall
 
         var ball1Forward =
             Quaternion.AngleAxis(-splitAngle, Vector3.up) * forward;
-        var ball1 =
-            Instantiate(splitCannonBallPrefab, position, Quaternion.identity);
-        ball1.Setup(ball1Forward);
+        var ball1 = pool.GetCannonBall(CannonBallType.Normal);
+        ball1.transform.position = position;
+        ball1.Setup(ball1Forward, pool);
 
         var ball2Forward =
             Quaternion.AngleAxis(splitAngle, Vector3.up) * forward;
-        var ball2 =
-            Instantiate(splitCannonBallPrefab, position, Quaternion.identity);
-        ball2.Setup(ball2Forward);
+        var ball2 = pool.GetCannonBall(CannonBallType.Normal);
+        ball2.transform.position = position;
+        ball2.Setup(ball2Forward, pool);
 
         animator.SetTrigger(SpecialUsedHash);
         enabled = false;
@@ -50,9 +53,9 @@ public class SplitCannonBall : CannonBall
 
     private void Update()
     {
-        splitTime -= Time.deltaTime;
+        remainingSplitTime -= Time.deltaTime;
 
-        if (splitTime <= 0)
+        if (remainingSplitTime <= 0)
             SpawnSplitCannonBalls();
     }
 }

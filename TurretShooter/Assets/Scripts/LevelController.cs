@@ -5,108 +5,129 @@ using UnityEngine.SceneManagement;
 using System.Text.RegularExpressions;
 using TMPro;
 
-namespace CannonApp
+public class LevelController : MonoBehaviour
 {
-    public class LevelController : MonoBehaviour
+    private static readonly int LevelEndedHash = Animator.StringToHash("LevelEnded");
+    private static readonly int GameOverHash = Animator.StringToHash("GameOver");
+
+    [SerializeField] private CannonController cannonController;
+    [SerializeField] private Animator animator;
+    [SerializeField] private TMP_Text remainingTargetsText;
+    [SerializeField] private TMP_Text levelFinishedText;
+
+    private static int levelCount;
+
+    private int remainingTargets;
+    private int currentLevel;
+
+    public void TargetDestroyed()
     {
-        private static readonly int LevelEndedHash = Animator.StringToHash("LevelEnded");
-        private static readonly int GameOverHash = Animator.StringToHash("GameOver");
+        remainingTargets--;
 
-        [SerializeField] private CannonController cannonController;
-        [SerializeField] private Animator animator;
-        [SerializeField] private TMP_Text remainingTargetsText;
-        [SerializeField] private TMP_Text levelFinishedText;
+        if (remainingTargets <= 0)
+            EndLevel();
 
-        private static int levelCount;
+        UpdateRemainingTargets();
+    }
 
-        private int remainingTargets;
-        private int currentLevel;
+    public void OnFinishedEndLevelAnimation()
+    {
+        GoToLevel(currentLevel + 1);
+    }
 
-        public void TargetDestroyed()
+    public void OnRetryClicked()
+    {
+        GoToLevel(1);
+    }
+
+    private void EndLevel()
+    {
+        cannonController.DisableFire();
+
+        if (currentLevel == levelCount)
         {
-            remainingTargets--;
-
-            if (remainingTargets <= 0)
-                EndLevel();
-
-            UpdateRemainingTargets();
+            animator.SetTrigger(GameOverHash);
+            return;
         }
 
-        public void OnFinishedEndLevelAnimation()
+        levelFinishedText.text = $"Level {currentLevel} Finished!";
+        animator.SetTrigger(LevelEndedHash);
+    }
+
+    private void GoToLevel(int levelIndex)
+    {
+        SceneManager.LoadScene($"Level{levelIndex}");
+    }
+
+    private bool GetLevelIndex(string sceneName, out int levelIndex)
+    {
+        Match find = Regex.Match(sceneName, "\\d+");
+
+        if (find != Match.Empty)
         {
-            GoToLevel(currentLevel + 1);
+            levelIndex = Int32.Parse(find.Value);
+            return true;
         }
 
-        public void OnRetryClicked()
+        levelIndex = -1;
+        return false;
+    }
+
+    private void Awake()
+    {
+        InitializeLevelCount();
+        SetCurrentLevel();
+        InitializeTargets();
+    }
+
+    private void SetCurrentLevel()
+    {
+        if (!GetLevelIndex(SceneManager.GetActiveScene().name, out currentLevel))
         {
-            GoToLevel(1);
+            Debug.LogError("Level Controller on a non-level scene!");
+        }
+    }
+
+    private void InitializeTargets()
+    {
+        Target[] targets = FindObjectsOfType<Target>();
+
+        foreach (var target in targets)
+        {
+            target.Setup(this);
         }
 
-        private void EndLevel()
-        {
-            cannonController.DisableFire();
+        remainingTargets = targets.Length;
 
-            if (currentLevel == levelCount)
+        UpdateRemainingTargets();
+    }
+
+    private void InitializeLevelCount()
+    {
+        if (levelCount != 0)
+            return;
+
+        int sceneCount = SceneManager.sceneCountInBuildSettings;
+
+        int maxLevelFound = 0;
+
+        for (int i = 0; i < sceneCount; i++)
+        {
+            string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
+            string sceneName = Path.GetFileNameWithoutExtension(scenePath);
+
+            if (GetLevelIndex(sceneName, out var levelIndex))
             {
-                animator.SetTrigger(GameOverHash);
-                return;
+                maxLevelFound = Mathf.Max(maxLevelFound, levelIndex);
+                levelCount++;
             }
-
-            levelFinishedText.text = $"Level {currentLevel} Finished!";
-            animator.SetTrigger(LevelEndedHash);
         }
 
-        private void GoToLevel(int levelIndex)
-        {
-            SceneManager.LoadScene($"Level{levelIndex}");
-        }
+        Debug.Assert(maxLevelFound == levelCount, "Max Scene Level differs from the total levels found");
+    }
 
-        private void Awake()
-        {
-            InitializeLevelCount();
-            SetCurrentLevel();
-            InitializeTargets();
-        }
-
-        private void SetCurrentLevel()
-        {
-            // if ()
-            // {
-            //     Debug.LogError("Level Controller on a non-level scene!");
-            // }
-        }
-
-        private void InitializeTargets()
-        {
-        }
-
-        private void InitializeLevelCount()
-        {
-            if (levelCount != 0)
-                return;
-
-            int sceneCount = SceneManager.sceneCountInBuildSettings;
-
-            int maxLevelFound = 0;
-
-            for( int i = 0; i < sceneCount; i++ )
-            {
-                string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
-                string sceneName = Path.GetFileNameWithoutExtension(scenePath);
-
-                // if ()
-                // {
-                //     maxLevelFound = Mathf.Max(maxLevelFound, levelIndex);
-                //     levelCount++;
-                // }
-            }
-
-            Debug.Assert(maxLevelFound == levelCount, "Max Scene Level differs from the total levels found");
-        }
-
-        private void UpdateRemainingTargets()
-        {
-            remainingTargetsText.text = $"Remaining Targets: {remainingTargets}!";
-        }
+    private void UpdateRemainingTargets()
+    {
+        remainingTargetsText.text = $"Remaining Targets: {remainingTargets}!";
     }
 }

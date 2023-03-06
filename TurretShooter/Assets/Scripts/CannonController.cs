@@ -28,12 +28,18 @@ public class CannonController : MonoBehaviour
     [SerializeField]
     private Transform firePointTransform;
 
-    void Start()
+    [Header("Object pool settings")]
+    [SerializeField] private CannonBallType cannonBallTypeShot;
+    [SerializeField] private CannonBallsPool pool;
+    private bool fireDisabled;
+
+    public void DisableFire()
     {
-        
+        fireDisabled = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
-    
+
     void Update()
     {
         AimCannon();
@@ -53,14 +59,14 @@ public class CannonController : MonoBehaviour
 
     private void TryFireCannon()
     {
-        if (!Input.GetButtonDown("RightJoystickButton"))
+        if (fireDisabled || !Input.GetButtonDown("RightJoystickButton"))
         {
             return;
         }
 
-        CannonBall instantiatedBall =
-                Instantiate(projectilePrefab, firePointTransform.position, Quaternion.identity);
-        instantiatedBall.Setup(firePointTransform.forward * projectileFireForce);
+        CannonBall instantiatedBall = pool.GetCannonBall(cannonBallTypeShot);
+        instantiatedBall.transform.position = firePointTransform.position;
+        instantiatedBall.Setup(firePointTransform.forward * projectileFireForce, pool);
 
     }
 }
