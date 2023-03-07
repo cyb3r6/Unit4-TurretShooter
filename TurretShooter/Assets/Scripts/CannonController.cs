@@ -33,10 +33,17 @@ public class CannonController : MonoBehaviour
     [SerializeField] private CannonBallsPool pool;
     private bool fireDisabled;
 
+    [Header("input Settings")]
+    [SerializeField] private bool useKeyboard;
+    [SerializeField] private bool useMouse;
+    [SerializeField] private bool useGrabbing;
+
+    private ICannonInputScheme inputScheme;
+
     public void DisableFire()
     {
         fireDisabled = true;
-        Cursor.lockState = CursorLockMode.None;
+        inputScheme.Dispose();
     }
 
 
@@ -48,18 +55,20 @@ public class CannonController : MonoBehaviour
 
     private void AimCannon()
     {
-        float newBaseRotation = cannonBaseTransform.localRotation.eulerAngles.y + rotationSpeed * Input.GetAxis("RightJoystickX");
+        var input = inputScheme.AimInput();
+
+        float newBaseRotation = cannonBaseTransform.localRotation.eulerAngles.y + rotationSpeed * input.x;
         newBaseRotation = Mathf.Clamp(newBaseRotation, minYRotation, maxYRotation);
         cannonBaseTransform.localRotation = Quaternion.Euler(0, newBaseRotation, 0);
 
-        float newBarrelRotation = cannonBarrelTransform.localRotation.eulerAngles.x - rotationSpeed * Input.GetAxis("RightJoystickY");
+        float newBarrelRotation = cannonBarrelTransform.localRotation.eulerAngles.x - rotationSpeed * input.y;
         newBarrelRotation = Mathf.Clamp(newBarrelRotation, minXRotation, maxXRotation);
         cannonBarrelTransform.localRotation = Quaternion.Euler(newBarrelRotation, 0, 0);
     }
 
     private void TryFireCannon()
     {
-        if (fireDisabled || !Input.GetButtonDown("RightJoystickButton"))
+        if (fireDisabled || !inputScheme.FireTriggered())
         {
             return;
         }
@@ -68,5 +77,16 @@ public class CannonController : MonoBehaviour
         instantiatedBall.transform.position = firePointTransform.position;
         instantiatedBall.Setup(firePointTransform.forward * projectileFireForce, pool);
 
+    }
+    private void Awake()
+    {
+        if (useKeyboard)
+            inputScheme = new CannonKeyboardInputScheme();
+        if (useMouse)
+            inputScheme = new CannonMouseInputScheme();
+        else
+            inputScheme = new CannonJoystickInputScheme();
+
+        pool.Setup(20);
     }
 }
