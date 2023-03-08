@@ -3155,6 +3155,16 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7489498592515010997, guid: bd557301846767b459959894082f15d7,
         type: 3}
+      propertyPath: useMouse
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7489498592515010997, guid: bd557301846767b459959894082f15d7,
+        type: 3}
+      propertyPath: useGrabbing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7489498592515010997, guid: bd557301846767b459959894082f15d7,
+        type: 3}
       propertyPath: rotationSpeed
       value: 0.23
       objectReference: {fileID: 0}

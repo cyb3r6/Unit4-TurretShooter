@@ -33,7 +33,7 @@ public class CannonController : MonoBehaviour
     [SerializeField] private CannonBallsPool pool;
     private bool fireDisabled;
 
-    [Header("input Settings")]
+    [Header("Input Settings")]
     [SerializeField] private bool useKeyboard;
     [SerializeField] private bool useMouse;
     [SerializeField] private bool useGrabbing;
