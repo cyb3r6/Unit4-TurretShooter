@@ -40,7 +40,7 @@ public class CannonController : MonoBehaviour
 
     private ICannonInputScheme inputScheme;
 
-    public void DisableFire()
+    public void OnLevelEnded()
     {
         fireDisabled = true;
         inputScheme.Dispose();
@@ -78,6 +78,12 @@ public class CannonController : MonoBehaviour
         instantiatedBall.Setup(firePointTransform.forward * projectileFireForce, pool);
 
     }
+
+    private void Start()
+    {
+        GameServices.GetService<LevelController>().levelEnded += OnLevelEnded;
+    }
+
     private void Awake()
     {
         if (useKeyboard)

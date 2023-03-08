@@ -17,7 +17,8 @@ public class LevelController : MonoBehaviour
 
     private static int levelCount;
 
-    private int remainingTargets;
+    public Action levelEnded;
+    protected int remainingTargets;
     private int currentLevel;
 
     public void TargetDestroyed()
@@ -27,6 +28,12 @@ public class LevelController : MonoBehaviour
         if (remainingTargets <= 0)
             EndLevel();
 
+        UpdateRemainingTargets();
+    }
+
+    public virtual void RegisterTarget()
+    {
+        remainingTargets++;
         UpdateRemainingTargets();
     }
 
@@ -42,7 +49,7 @@ public class LevelController : MonoBehaviour
 
     private void EndLevel()
     {
-        cannonController.DisableFire();
+        levelEnded?.Invoke();
 
         if (currentLevel == levelCount)
         {
@@ -73,11 +80,17 @@ public class LevelController : MonoBehaviour
         return false;
     }
 
-    private void Awake()
+    protected virtual void Awake()
     {
+        GameServices.RegisterService(this);
+
         InitializeLevelCount();
         SetCurrentLevel();
-        InitializeTargets();
+    }
+
+    private void OnDestroy()
+    {
+        GameServices.DeregisterService(this);
     }
 
     private void SetCurrentLevel()
@@ -88,19 +101,6 @@ public class LevelController : MonoBehaviour
         }
     }
 
-    private void InitializeTargets()
-    {
-        Target[] targets = FindObjectsOfType<Target>();
-
-        foreach (var target in targets)
-        {
-            target.Setup(this);
-        }
-
-        remainingTargets = targets.Length;
-
-        UpdateRemainingTargets();
-    }
 
     private void InitializeLevelCount()
     {
@@ -126,7 +126,7 @@ public class LevelController : MonoBehaviour
         Debug.Assert(maxLevelFound == levelCount, "Max Scene Level differs from the total levels found");
     }
 
-    private void UpdateRemainingTargets()
+    protected void UpdateRemainingTargets()
     {
         remainingTargetsText.text = $"Remaining Targets: {remainingTargets}!";
     }
