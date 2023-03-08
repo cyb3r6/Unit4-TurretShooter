@@ -3,23 +3,26 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Text.RegularExpressions;
-using TMPro;
 
 public class LevelController : MonoBehaviour
 {
-    private static readonly int LevelEndedHash = Animator.StringToHash("LevelEnded");
-    private static readonly int GameOverHash = Animator.StringToHash("GameOver");
-
-    [SerializeField] private CannonController cannonController;
-    [SerializeField] private Animator animator;
-    [SerializeField] private TMP_Text remainingTargetsText;
-    [SerializeField] private TMP_Text levelFinishedText;
+    [SerializeField] protected UIGraphics uiGraphics;
 
     private static int levelCount;
 
     public Action levelEnded;
     protected int remainingTargets;
     private int currentLevel;
+
+    public void RetryGame()
+    {
+        GoToLevel(1);
+    }
+
+    public void NextLevel()
+    {
+        GoToLevel(currentLevel + 1);
+    }
 
     public void TargetDestroyed()
     {
@@ -28,23 +31,13 @@ public class LevelController : MonoBehaviour
         if (remainingTargets <= 0)
             EndLevel();
 
-        UpdateRemainingTargets();
+        uiGraphics.UpdateRemainingTargets(remainingTargets);
     }
 
     public virtual void RegisterTarget()
     {
         remainingTargets++;
-        UpdateRemainingTargets();
-    }
-
-    public void OnFinishedEndLevelAnimation()
-    {
-        GoToLevel(currentLevel + 1);
-    }
-
-    public void OnRetryClicked()
-    {
-        GoToLevel(1);
+        uiGraphics.UpdateRemainingTargets(remainingTargets);
     }
 
     private void EndLevel()
@@ -53,12 +46,11 @@ public class LevelController : MonoBehaviour
 
         if (currentLevel == levelCount)
         {
-            animator.SetTrigger(GameOverHash);
+            uiGraphics.EndGame();
             return;
         }
 
-        levelFinishedText.text = $"Level {currentLevel} Finished!";
-        animator.SetTrigger(LevelEndedHash);
+        uiGraphics.EndLevel(currentLevel);
     }
 
     private void GoToLevel(int levelIndex)
@@ -101,7 +93,6 @@ public class LevelController : MonoBehaviour
         }
     }
 
-
     private void InitializeLevelCount()
     {
         if (levelCount != 0)
@@ -124,10 +115,5 @@ public class LevelController : MonoBehaviour
         }
 
         Debug.Assert(maxLevelFound == levelCount, "Max Scene Level differs from the total levels found");
-    }
-
-    protected void UpdateRemainingTargets()
-    {
-        remainingTargetsText.text = $"Remaining Targets: {remainingTargets}!";
     }
 }

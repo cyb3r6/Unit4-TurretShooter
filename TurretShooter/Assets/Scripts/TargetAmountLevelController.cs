@@ -13,6 +13,6 @@ public class TargetAmountLevelController : LevelController
         base.Awake();
 
         remainingTargets = targetDestructionCount;
-        UpdateRemainingTargets();
+        uiGraphics.UpdateRemainingTargets(remainingTargets);
     }
 }

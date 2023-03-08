@@ -29,9 +29,9 @@ public class CannonController : MonoBehaviour
     private Transform firePointTransform;
 
     [Header("Object pool settings")]
-    [SerializeField] private CannonBallType cannonBallTypeShot;
-    [SerializeField] private CannonBallsPool pool;
-    private bool fireDisabled;
+    [SerializeField] private PoolObjectId cannonBallTypeShot;
+    [SerializeField] private ObjectsPool pool;
+
 
     [Header("input Settings")]
     [SerializeField] private bool useKeyboard;
@@ -39,6 +39,7 @@ public class CannonController : MonoBehaviour
     [SerializeField] private bool useGrabbing;
 
     private ICannonInputScheme inputScheme;
+    private bool fireDisabled;
 
     public void OnLevelEnded()
     {
@@ -73,7 +74,7 @@ public class CannonController : MonoBehaviour
             return;
         }
 
-        CannonBall instantiatedBall = pool.GetCannonBall(cannonBallTypeShot);
+        CannonBall instantiatedBall = pool.GetObject<CannonBall>(cannonBallTypeShot);
         instantiatedBall.transform.position = firePointTransform.position;
         instantiatedBall.Setup(firePointTransform.forward * projectileFireForce, pool);
 

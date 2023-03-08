@@ -4,17 +4,19 @@ using UnityEngine;
 
 public class SplitCannonBall : CannonBall
 {
-    private static readonly int SpecialAvailableHash = Animator.StringToHash("SpecialAvailable");
-    private static readonly int SpecialUsedHash = Animator.StringToHash("SpecialUsed");
+    private static readonly int SpecialAvailableHash =
+        Animator.StringToHash("SpecialAvailable");
+    private static readonly int SpecialUsedHash =
+        Animator.StringToHash("SpecialUsed");
 
     public float splitTime = 0.7f;
     public float splitAngle = 20.0f;
 
-    public override CannonBallType BallType => CannonBallType.Split;
+    public override PoolObjectId PoolId => PoolObjectId.SplitCannonBall;
 
     private float remainingSplitTime;
 
-    public override void Setup(Vector3 fireForce, CannonBallsPool objectPool)
+    public override void Setup(Vector3 fireForce, ObjectsPool objectPool)
     {
         base.Setup(fireForce, objectPool);
 
@@ -37,13 +39,13 @@ public class SplitCannonBall : CannonBall
 
         var ball1Forward =
             Quaternion.AngleAxis(-splitAngle, Vector3.up) * forward;
-        var ball1 = pool.GetCannonBall(CannonBallType.Normal);
+        var ball1 = pool.GetObject<SplitCannonBall>(PoolObjectId.SplitCannonBall);
         ball1.transform.position = position;
         ball1.Setup(ball1Forward, pool);
 
         var ball2Forward =
             Quaternion.AngleAxis(splitAngle, Vector3.up) * forward;
-        var ball2 = pool.GetCannonBall(CannonBallType.Normal);
+        var ball2 = pool.GetObject<SplitCannonBall>(PoolObjectId.SplitCannonBall);
         ball2.transform.position = position;
         ball2.Setup(ball2Forward, pool);
 

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CannonBall : MonoBehaviour
+public class CannonBall : MonoBehaviour, IPoolObject
 {
     private static readonly int Exploded = Animator.StringToHash("Exploded");
 
@@ -11,12 +11,12 @@ public class CannonBall : MonoBehaviour
     [SerializeField] private float explosionUpwardsModifier = 1.0f;
     [SerializeField] protected Animator animator;
 
-    public virtual CannonBallType BallType => CannonBallType.Normal;
+    public virtual PoolObjectId PoolId => PoolObjectId.DefaultCannonBall;
 
     protected Rigidbody ballRigidbody;
-    protected CannonBallsPool pool;
+    protected ObjectsPool pool;
 
-    public virtual void Setup(Vector3 fireForce, CannonBallsPool objectPool)
+    public virtual void Setup(Vector3 fireForce, ObjectsPool objectPool)
     {
         ballRigidbody.angularVelocity = Vector3.zero;
         ballRigidbody.velocity = Vector3.zero;
@@ -27,9 +27,19 @@ public class CannonBall : MonoBehaviour
         ballRigidbody.angularVelocity = new Vector3(Random.Range(-10, 10), Random.Range(-10, 10), Random.Range(-10, 10));
     }
 
+    public void Deactivate()
+    {
+        gameObject.SetActive(false);
+    }
+
+    public void Activate()
+    {
+        gameObject.SetActive(true);
+    }
+
     public void OnFinishedExplosionAnimation()
     {
-        pool.ReleaseCannonBall(this, BallType);
+        pool.ReleaseObject(this);
     }
 
     protected virtual void OnCollisionEnter(Collision collision)
@@ -65,7 +75,7 @@ public class CannonBall : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        pool.ReleaseCannonBall(this, BallType);
+        pool.ReleaseObject(this);
     }
 
     private void Awake()
